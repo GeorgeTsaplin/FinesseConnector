@@ -1,0 +1,6 @@
+{
+    "httpPort__": 9998,
+    "httpsPort": 8443,
+    "longpollingTimeout": 60000,
+    "clickToCallCommandTtl": 3000
+}

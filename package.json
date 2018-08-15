@@ -1,0 +1,45 @@
+{
+  "name": "FinesseConnector",
+  "version": "1.0.0",
+  "description": "Tightly integration of Сontact Сenter operator`s workstation and Finesse web-application",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GeorgeTsaplin/FinesseConnector"
+  },
+  "build": {
+    "productName": "CTI Finesse Connector",
+    "appId": "cti.finesseConnector",
+    "mac": {
+      "category": "public.app-category.business"
+    },
+    "asarUnpack": [
+        "config/config.json",
+        "cert/*"
+    ]
+  },
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "start": "electron ."
+  },
+  "keywords": [
+    "Electron",
+    "clickToCall",
+    "finesse",
+    "tel"
+  ],
+  "author": {
+    "name": "CTI LLC",
+    "email": "support@cti.ru"
+  },
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "electron": "^2.0.0",
+    "electron-builder": "^20.26.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "nconf": "^0.10.0"
+  }
+}

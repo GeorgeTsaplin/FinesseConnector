@@ -1,0 +1,34 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\callto]
+@="URL:callto"
+"URL Protocol"=""
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\tel]
+@="URL:tel"
+"URL Protocol"=""
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\CTI Finesse Connector.callto]
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\CTI Finesse Connector.callto\DefaultIcon]
+@="C:\\Users\\georg\\AppData\\Local\\Programs\\FinesseConnector\\CTI Finesse Connector.exe"
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\CTI Finesse Connector.callto\shell]
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\CTI Finesse Connector.callto\shell\open]
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\CTI Finesse Connector.callto\shell\open\command]
+@="\"C:\\Users\\georg\\AppData\\Local\\Programs\\FinesseConnector\\CTI Finesse Connector.exe\" %1"
+
+[HKEY_CURRENT_USER\SOFTWARE\CTI Finesse Connector]
+
+[HKEY_CURRENT_USER\SOFTWARE\CTI Finesse Connector\Capabilities]
+"ApplicationDescription"="CTI Finesse Connector"
+"ApplicationName"="CTI Finesse Connector"
+
+[HKEY_CURRENT_USER\SOFTWARE\CTI Finesse Connector\Capabilities\URLAssociations]
+"callto"="CTI Finesse Connector.callto"
+"tel"="CTI Finesse Connector.callto"
+
+[HKEY_CURRENT_USER\SOFTWARE\RegisteredApplications]
+"CTI Finesse Connector"="Software\\CTI Finesse Connector\\Capabilities"
