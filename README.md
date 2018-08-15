@@ -9,10 +9,10 @@ Application features are:
 
 ## Pre-Build steps
 
-1. npm install
-2. yarn install
+1. `npm install`
+2. `yarn install`
 
-Historically project used `npm`, but electron-builder required yarn, so now on project uses both package managers.
+Historically project used `npm`, but electron-builder required `yarn`, so now on project uses both package managers.
 
 ## Packaging and distribution
 
@@ -31,7 +31,7 @@ After installation application folder must have such structure:
                 * certificate.pem - certificate for server validation
                 * key.pem - certificate private key
             * config
-                * [config.json](.\config\config.json)
+                * [config.json](./config/config.json)
 
 Configuration parameters are:
 
@@ -66,7 +66,7 @@ For working under HTTPS you must:
 
 At Windows 7 required no additional steps to register Finesse Connector as tel:// protocol handler.
 
-At Windows 10 you must add some records to registry. As an example you should use this [.reg file](.\registerTelSchemaAtWin10.reg)
+At Windows 10 you must add some records to registry. As an example you should use this [.reg file](./registerTelSchemaAtWin10.reg)
 (you must write correct path to application at keys "\DefaultIcon" and "\shell\open\command").
 
 Additional info can be found [here](https://electronjs.org/docs/api/app#appsetasdefaultprotocolclientprotocol-path-args).
