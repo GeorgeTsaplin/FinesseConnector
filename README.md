@@ -66,7 +66,7 @@ For working under HTTPS you must:
 
 At Windows 7 required no additional steps to register Finesse Connector as tel:// protocol handler.
 
-At Windows 10 you must add some records to registry. As an example you should use this [.reg file](./registerTelSchemaAtWin10.reg)
+At Windows 10 you must add some records to registry (bug report at electron project - [#14108](https://github.com/electron/electron/issues/14108)). As an example you should use this [.reg file](./registerTelSchemaAtWin10.reg)
 (you must write correct path to application at keys "\DefaultIcon" and "\shell\open\command").
 
 Additional info can be found [here](https://electronjs.org/docs/api/app#appsetasdefaultprotocolclientprotocol-path-args).
