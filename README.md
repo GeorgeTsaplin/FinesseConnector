@@ -5,7 +5,8 @@ Finesse Connector is necessary tightly integration of Сontact Сenter operator`
 Application features are:
 
 1. Make call via Finesse by clicking on URL with tel:// protocol (Click-To-Call);
-2. ...
+2. Proxy requests to [Finesse API](https://developer.cisco.com/docs/finesse/#!cisco-finesse-desktop-apis);
+3. (will be added later)...
 
 ## Pre-Build steps
 
@@ -38,7 +39,15 @@ Configuration parameters are:
 1. `httpPort` - HTTP port to listen requests on;
 2. `httpsPort` - HTTPS port to listen requests on;
 3. `longpollingTimeout` - after getting request application will waits for data to send as response for specified milliseconds (for example waits command to perform Click-To-Call);
-4. `clickToCallCommandTtl` - after operator click `tel://` URL appropriate command will waits incoming HTTP request for specified time in milliseconds. If come no request then command will be forgotten.
+4. `clickToCallCommandTtl` - after operator click `tel://` URL appropriate command will waits incoming HTTP request for specified time in milliseconds. If come no request then command will be forgotten;
+5. `finesseApiCommandTtl` - after external application sends Finesse API request via Finesse Connector appropriate command will waits incoming HTTP request for specified time in milliseconds. If come no request then command will be forgotten;
+6. `logger` - application trace configuration (based on [rotating-file-stream](https://github.com/iccicci/rotating-file-stream#readme), [electron-log](https://github.com/megahertz/electron-log#readme) and [morgan](https://github.com/expressjs/morgan#readme)):
+    1. `fileName` - path and name of logging file. Can be relative or absolute path;
+    2. `logLevel` - debug, info, warn, error;
+    3. `size` - specifies the file size to rotate the file;
+    4. `interval` - specifies the time interval to rotate the file;
+    5. `maxSize` - specifies the maximum size of rotated files to keep;
+    6. `morganFormat` - HTTP request/response output format.
 
 After start application runs Web Server and listen requests on specified at configuration file HTTP and HTTPS ports (must be specified **at least** one of them).
 Recommended to use HTTPS port because of security consideration and better browsers support.
@@ -74,3 +83,42 @@ Additional info can be found [here](https://electronjs.org/docs/api/app#appsetas
 ## License
 
 [GNU GENERAL PUBLIC LICENSE](LICENSE)
+
+## Debugging in VSCode
+1. Open project folder in VSCode
+2. Debug->Add Configuration...
+3. add this code to the opened file:
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                ".",
+                "--enable-logging"
+            ],
+            "env": {},
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        },
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 9998,
+            "sourceMaps": false,
+            "outDir": null
+        }
+    ]
+}
+```
+4. Debug-> Start Debugging (F5)

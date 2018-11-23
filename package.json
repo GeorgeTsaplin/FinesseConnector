@@ -1,6 +1,6 @@
 {
   "name": "FinesseConnector",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tightly integration of Сontact Сenter operator`s workstation and Finesse web-application",
   "main": "main.js",
   "repository": {
@@ -35,10 +35,12 @@
   },
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "electron": "^2.0.0",
+    "electron": "^3.0.9",
     "electron-builder": "^20.26.1"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "body-parser-xml": "^1.1.0",
     "electron-log": "^2.2.17",
     "express": "^4.16.3",
     "moment": "^2.22.2",

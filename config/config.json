@@ -1,9 +1,10 @@
 {
     "httpPort": 9998,
-    "httpsPort": 8443,
+    "httpsPort__": 8443,
     "longpollingTimeout": 60000,
     "clickToCallCommandTtl": 3000,
-
+    "finesseApiCommandTtl": 60000,
+    
     "logging": {
         "fileName": "./logs/finesseConnector.log",
         "logLevel": "info",
