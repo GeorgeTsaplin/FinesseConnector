@@ -107,7 +107,7 @@ function waitForFinesseCommandAndReturnIt (request, response, longpollingTill) {
     return;
   }
 
-  setTimeout(function() { waitForFinesseComandAndReturnIt(request, response, longpollingTill) }, 300);
+  setTimeout(function() { waitForFinesseCommandAndReturnIt(request, response, longpollingTill) }, 300);
 }
 
 function waitForDeeplinkingUrlAndReturnIt (request, response, longpollingTill) {
