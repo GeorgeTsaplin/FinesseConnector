@@ -88,9 +88,9 @@ function waitForFinesseCommandAndReturnIt (request, response, longpollingTill) {
     if (ttl < finesseApiUrlTtl) {
 
       try {
-        trace.log.debug(`got finesse api request ${request.id} with body: ${JSON.stringify(res.commandBody)}`);      
+        trace.log.info(`returns finesse api request ${request.id} with body: ${JSON.stringify(res.commandBody)}`);      
       } catch(e) {
-        trace.log.warn(`got finesse api request ${request.id}, but got exception at JSON.stringify: ${e.message}`);      
+        trace.log.warn(`returns finesse api request ${request.id}, but cannot cast body to JSON: ${e.message}`);      
       }
 
       response.set('Content-Type', 'application/json')
