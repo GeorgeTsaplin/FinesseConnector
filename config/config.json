@@ -3,5 +3,14 @@
     "httpsPort__": 8443,
     "longpollingTimeout": 60000,
     "clickToCallCommandTtl": 3000,
-    "finesseApiCommandTtl": 60000
+    "finesseApiCommandTtl": 60000,
+    
+    "logging": {
+        "fileName": "./logs/finesseConnector.log",
+        "logLevel": "info",
+        "size": "30M",
+        "interval": "1d",
+        "maxSize": "300M",
+        "morganFormat": ":remote-addr - :remote-user [:date[clf]] \":method :url\" [:id] Referrer=\":referrer\" Origin=\":origin\" :status :response-time ms - :res[content-length]"
+    }
 }

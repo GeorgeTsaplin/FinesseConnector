@@ -3,34 +3,35 @@ const { app } = require('electron');
 
 const config = require('./config');
 
+const trace = require('./trace');
+
+trace.log.info('application started');
+
 const expressApp = require('./server');
 
-const xmlserializer = require('xmlserializer');
+const moment = require('moment');
 
+/*// -----------------------------
+// -- Configure app ------------
+const config = require('nconf');
+const path = require('path');
+
+const configPath = path.join(__dirname, '..\\..\\config\\config.json');
+
+console.info(`path to config is ${configPath}`);
+
+config.file({file: configPath});
+// -----------------------------
+*/
 const Protocol = 'tel';
 
-const HttpPort = config.get('httpPort');
-const HttpsPort = config.get('httpsPort');
 const LongpollingTimeout = config.get('longpollingTimeout');
 const UrlTtl = config.get('clickToCallCommandTtl');
-const finesseApiUrlTtl = config.get('finesseApiCommandTtl');
 
 let running = false;
 
 // Deep linked url
 let deeplinkingUrl;
-
-var finesseCommands =[];
-
-finesseCommands.add = function(route,method,commandBody){
-  var command={
-    "route":route,
-    "method":method,
-    "commandBody":commandBody,
-    "timestamp": new Date()
-  };
-  this.push(command);
-}
 
 const isSecondInstance = app.makeSingleInstance((argv, workingDirectory) => {
   // Protocol handler for win32
@@ -46,61 +47,53 @@ if (isSecondInstance) {
   return
 }
 
-expressApp.get('/dequeue/clickToCall', (request, response) => {
+expressApp.get('/clickToCall', (request, response) => {
   var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
   waitForDeeplinkingUrlAndReturnIt(request, response, longpollingTill);
 });
 
-expressApp.get('/dequeue/finesseApi', (request, response) => {
-  var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
-  waitForFinesseComandAndReturnIt(request, response, longpollingTill);
-});
+/*
+function createServer(app) {
+  const expressApp = express();
 
-expressApp.get('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'GET',request.body);
-  response.status(200).send('OK!');
-});
+  expressApp.use((req, res, next) => {
+    res.set('Content-Type', 'text/plain');
+    res.set('Access-Control-Allow-Origin', ['*']);
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+  })
 
-expressApp.post('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'POST',request.body);
-  response.status(200).send('OK!');
-});
+  expressApp.get('/clickToCall', (request, response) => {
+    var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
+    waitForDeeplinkingUrlAndReturnIt(request, response, longpollingTill);
+  });
 
-expressApp.put('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'PUT',request.body);
-  response.status(200).send('OK!');
-});
-
-expressApp.delete('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'DELETE',request.body);
-  response.status(200).send('OK!');
-});
-
-function waitForFinesseComandAndReturnIt (request, response, longpollingTill) {
-  var res = finesseCommands.shift();
-  if (res) {
-    var ttl = (new Date()) - res.timestamp;
-    if (ttl < finesseApiUrlTtl) {
-      response.set('Content-Type', 'application/json')
-        .status(200)
-        .send(res);
-
-      return;
-    }
+  if (HttpPort) {
+    const httpServer = http.createServer(expressApp);
+    httpServer.listen(HttpPort, () => console.log(`listening on port ${HttpPort}...`));
   }
 
-  var dtNow = new Date();
-  if (longpollingTill - dtNow <= 0) {
-    response.status(204).send("");
-    return;
-  }
+  if (HttpsPort) {
+    var privateKey  = fs.readFileSync('cert/key.pem');
+    var certificate = fs.readFileSync('cert/certificate.pem');
 
-  setTimeout(function() { waitForFinesseComandAndReturnIt(request, response, longpollingTill) }, 300);
-}
+    var options = {
+      key: privateKey,
+      cert: certificate
+    };
+
+    const httpsServer = https.createServer(options, expressApp);
+    httpsServer.listen(HttpsPort, () => console.log(`listening on port ${HttpsPort}...`));
+  }
+}*/
 
 function waitForDeeplinkingUrlAndReturnIt (request, response, longpollingTill) {
   var res = deeplinkingUrl;
   deeplinkingUrl = null;
+
+  trace.log.debug(`waits for deeplinking url till '${moment(longpollingTill).format('HH:mm:ss.SSS').toString()}' for request '${request.id}'...`);
+
   if (res) {
     var ttl = (new Date()) - res.timestamp;
     if (ttl < UrlTtl) {
@@ -117,7 +110,6 @@ function waitForDeeplinkingUrlAndReturnIt (request, response, longpollingTill) {
 
   setTimeout(function() { waitForDeeplinkingUrlAndReturnIt(request, response, longpollingTill) }, 300);
 }
-
 
 function start () {
   running = true;
@@ -148,6 +140,8 @@ function processUrl (url) {
   if (!url) {
     return;
   }
+
+  trace.log.info(`got deeplinking url: '${url}'`);
 
   deeplinkingUrl = { url: url, timestamp: new Date() };
 }

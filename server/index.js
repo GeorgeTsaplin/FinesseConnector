@@ -6,7 +6,11 @@ const path = require('path');
 const bodyParser = require("body-parser");
 require('body-parser-xml')(bodyParser);
 
+const uuid = require('node-uuid');
+
 const config = require('../config');
+
+const trace = require('../trace');
 
 const HttpPort = config.get('httpPort');
 const HttpsPort = config.get('httpsPort');
@@ -25,6 +29,14 @@ expressApp.use(bodyParser.xml({
 //expressApp.use(bodyParser.json());
 
 expressApp.use((req, res, next) => {
+    req.id = uuid.v4();
+    next();
+});
+
+// add logging
+expressApp.use(trace.morgan);
+
+expressApp.use((req, res, next) => {
     res.set('Content-Type', 'text/plain');
     res.set('Access-Control-Allow-Origin', ['*']);
     res.set('Access-Control-Allow-Methods', ['GET','POST','PUT','DELETE']);
@@ -34,7 +46,7 @@ expressApp.use((req, res, next) => {
 
 if (HttpPort) {
     const httpServer = http.createServer(expressApp);
-    httpServer.listen(HttpPort, () => console.log(`listening on port ${HttpPort}...`));
+    httpServer.listen(HttpPort, () => trace.log.info(`listening on HTTP port ${HttpPort}...`));
 }
 
 if (HttpsPort) {
@@ -47,7 +59,7 @@ if (HttpsPort) {
     };
 
     const httpsServer = https.createServer(options, expressApp);
-    httpsServer.listen(HttpsPort, () => console.log(`listening on port ${HttpsPort}...`));
+    httpsServer.listen(HttpsPort, () => trace.log.info(`listening on HTTPS port ${HttpsPort}...`));
 } 
 
 module.exports = expressApp;
