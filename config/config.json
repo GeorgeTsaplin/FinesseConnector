@@ -1,6 +1,7 @@
 {
-    "httpPort__": 9998,
-    "httpsPort": 8443,
+    "httpPort": 9998,
+    "httpsPort__": 8443,
     "longpollingTimeout": 60000,
-    "clickToCallCommandTtl": 3000
+    "clickToCallCommandTtl": 3000,
+    "finesseApiCommandTtl": 60000
 }
