@@ -74,3 +74,40 @@ Additional info can be found [here](https://electronjs.org/docs/api/app#appsetas
 ## License
 
 [GNU GENERAL PUBLIC LICENSE](LICENSE)
+
+## Debugging in VSCode
+1. Open project folder in VSCode
+2. Debug->Add Configuration...
+3. add this code to the opened file:
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                ".",
+                "--enable-logging"
+            ],
+            "env": {},
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        },
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 9998,
+            "sourceMaps": false,
+            "outDir": null
+        }
+    ]
+}
+4. Debug-> Start Debugging (F5)
