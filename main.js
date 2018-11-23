@@ -3,7 +3,13 @@ const { app } = require('electron');
 
 const config = require('./config');
 
+const trace = require('./trace');
+
+trace.log.info('application started');
+
 const expressApp = require('./server');
+
+const moment = require('moment');
 
 /*// -----------------------------
 // -- Configure app ------------
@@ -19,8 +25,6 @@ config.file({file: configPath});
 */
 const Protocol = 'tel';
 
-const HttpPort = config.get('httpPort');
-const HttpsPort = config.get('httpsPort');
 const LongpollingTimeout = config.get('longpollingTimeout');
 const UrlTtl = config.get('clickToCallCommandTtl');
 
@@ -87,6 +91,9 @@ function createServer(app) {
 function waitForDeeplinkingUrlAndReturnIt (request, response, longpollingTill) {
   var res = deeplinkingUrl;
   deeplinkingUrl = null;
+
+  trace.log.debug(`waits for deeplinking url till '${moment(longpollingTill).format('HH:mm:ss.SSS').toString()}' for request '${request.id}'...`);
+
   if (res) {
     var ttl = (new Date()) - res.timestamp;
     if (ttl < UrlTtl) {
@@ -133,6 +140,8 @@ function processUrl (url) {
   if (!url) {
     return;
   }
+
+  trace.log.info(`got deeplinking url: '${url}'`);
 
   deeplinkingUrl = { url: url, timestamp: new Date() };
 }
