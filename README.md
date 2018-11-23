@@ -79,6 +79,7 @@ Additional info can be found [here](https://electronjs.org/docs/api/app#appsetas
 1. Open project folder in VSCode
 2. Debug->Add Configuration...
 3. add this code to the opened file:
+```json
 {
     "version": "0.2.0",
     "configurations": [
@@ -110,4 +111,5 @@ Additional info can be found [here](https://electronjs.org/docs/api/app#appsetas
         }
     ]
 }
+```
 4. Debug-> Start Debugging (F5)
