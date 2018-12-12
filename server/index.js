@@ -38,8 +38,8 @@ expressApp.use(trace.morgan);
 
 expressApp.use((req, res, next) => {
     res.set('Content-Type', 'text/plain');
-    res.set('Access-Control-Allow-Origin', ['*']);
-    res.set('Access-Control-Allow-Methods', ['GET','POST','PUT','DELETE']);
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
     res.set('Access-Control-Allow-Headers', 'Content-Type');
     next();
 })
