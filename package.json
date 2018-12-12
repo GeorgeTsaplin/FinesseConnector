@@ -1,6 +1,6 @@
 {
   "name": "FinesseConnector",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Tightly integration of Сontact Сenter operator`s workstation and Finesse web-application",
   "main": "main.js",
   "repository": {
