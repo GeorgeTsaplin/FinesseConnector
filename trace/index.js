@@ -58,5 +58,8 @@ const TraceRfs = configureTraceStream();
 
 module.exports = {
     log: configureLogger(TraceRfs),
-    morgan: configureMorgan(TraceRfs)
+    morgan: configureMorgan(TraceRfs),
+    destroy: () => {
+        TraceRfs.end();
+    }
 };

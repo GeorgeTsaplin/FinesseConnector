@@ -6,7 +6,7 @@ const path = require('path');
 const bodyParser = require("body-parser");
 require('body-parser-xml')(bodyParser);
 
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 
 const config = require('../config');
 
@@ -44,22 +44,24 @@ expressApp.use((req, res, next) => {
     next();
 })
 
-if (HttpPort) {
-    const httpServer = http.createServer(expressApp);
-    httpServer.listen(HttpPort, () => trace.log.info(`listening on HTTP port ${HttpPort}...`));
+expressApp.startServer = function () {
+    if (HttpPort) {
+        const httpServer = http.createServer(expressApp);
+        httpServer.listen(HttpPort, () => trace.log.info(`listening on HTTP port ${HttpPort}...`));
+    }
+
+    if (HttpsPort) {
+        var privateKey  = fs.readFileSync(path.join(__dirname, '../cert/key.pem'));
+        var certificate = fs.readFileSync(path.join(__dirname, '../cert/certificate.pem'));
+
+        var options = {
+            key: privateKey,
+            cert: certificate
+        };
+
+        const httpsServer = https.createServer(options, expressApp);
+        httpsServer.listen(HttpsPort, () => trace.log.info(`listening on HTTPS port ${HttpsPort}...`));
+    }
 }
-
-if (HttpsPort) {
-    var privateKey  = fs.readFileSync(path.join(__dirname, '../cert/key.pem'));
-    var certificate = fs.readFileSync(path.join(__dirname, '../cert/certificate.pem'));
-
-    var options = {
-        key: privateKey,
-        cert: certificate
-    };
-
-    const httpsServer = https.createServer(options, expressApp);
-    httpsServer.listen(HttpsPort, () => trace.log.info(`listening on HTTPS port ${HttpsPort}...`));
-} 
 
 module.exports = expressApp;
