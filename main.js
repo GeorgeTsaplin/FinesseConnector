@@ -5,8 +5,6 @@ const config = require('./config');
 
 const trace = require('./trace');
 
-trace.log.info('application started');
-
 const expressApp = require('./server');
 
 const moment = require('moment');
@@ -22,8 +20,36 @@ let running = false;
 // Deep linked url
 let deeplinkingUrl;
 
-var finesseCommands = [];
+app.on('before-quit', () => {
+  trace.destroy();
+});
 
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', () => {
+  if (!isSecondInstance) {
+    start();
+  }
+  else {
+    trace.log.debug(`onready: it is a second instance. Process id is ${process.pid}`);
+  }
+});
+
+app.on('activate', function () {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (!running) {
+    start();
+  }
+});
+
+app.on('open-url', (event, url) => {
+  event.preventDefault();
+  processUrl(url);
+});
+
+var finesseCommands = [];
 finesseCommands.add = function(route,method,commandBody){
   var command={
     "route":route,
@@ -35,48 +61,24 @@ finesseCommands.add = function(route,method,commandBody){
 }
 
 const isSecondInstance = app.makeSingleInstance((argv, workingDirectory) => {
-  // Protocol handler for win32
-    // argv: An array of the second instance’s (command line / deep linked) arguments
-    if (process.platform == 'win32') {
-      // Keep only command line / deep linked arguments
-      processUrl(argv.slice(1)[0]);
-    }
+  // HACK g.tsaplin: This callback executed at first\single instance of app
+  trace.log.debug(`callback for makeSingleInstance. Process id is ${process.pid}`);
+  // argv: An array of the second instance’s (command line / deep linked) arguments
+  if (process.platform == 'win32') {
+    // Keep only command line / deep linked arguments
+    processUrl(argv.slice(1)[0]);
+  }
 })
 
 if (isSecondInstance) {
-  app.quit()
-  return
+  trace.log.debug(`it is a second instance. Process id is ${process.pid}`);
+
+  app.quit();
+
+  return;
 }
 
-expressApp.get('/dequeue/clickToCall', (request, response) => {
-  var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
-  waitForDeeplinkingUrlAndReturnIt(request, response, longpollingTill);
-});
-
-expressApp.get('/dequeue/finesseApi', (request, response) => {
-  var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
-  waitForFinesseCommandAndReturnIt(request, response, longpollingTill);
-});
-
-expressApp.get('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'GET',request.body);
-  response.status(200).end();
-});
-
-expressApp.post('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'POST',request.body);
-  response.status(200).end();
-});
-
-expressApp.put('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'PUT',request.body);
-  response.status(200).end();
-});
-
-expressApp.delete('/finesseApi/*', (request, response) => {
-  finesseCommands.add(request.url,'DELETE',request.body);
-  response.status(200).end();
-});
+trace.log.info('application started');
 
 function waitForFinesseCommandAndReturnIt (request, response, longpollingTill) {
   var res = finesseCommands.shift();
@@ -136,25 +138,44 @@ function waitForDeeplinkingUrlAndReturnIt (request, response, longpollingTill) {
 function start () {
   running = true;
 
+  expressApp.startServer();
+
+  { // routes for Express
+    expressApp.get('/dequeue/clickToCall', (request, response) => {
+      var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
+      waitForDeeplinkingUrlAndReturnIt(request, response, longpollingTill);
+    });
+    
+    expressApp.get('/dequeue/finesseApi', (request, response) => {
+      var longpollingTill = new Date((new Date()).getTime() + LongpollingTimeout);
+      waitForFinesseCommandAndReturnIt(request, response, longpollingTill);
+    });
+    
+    expressApp.get('/finesseApi/*', (request, response) => {
+      finesseCommands.add(request.url,'GET',request.body);
+      response.status(200).end();
+    });
+    
+    expressApp.post('/finesseApi/*', (request, response) => {
+      finesseCommands.add(request.url,'POST',request.body);
+      response.status(200).end();
+    });
+    
+    expressApp.put('/finesseApi/*', (request, response) => {
+      finesseCommands.add(request.url,'PUT',request.body);
+      response.status(200).end();
+    });
+    
+    expressApp.delete('/finesseApi/*', (request, response) => {
+      finesseCommands.add(request.url,'DELETE',request.body);
+      response.status(200).end();
+    });  
+  }
+
   if (process.platform == 'win32') {
     processUrl(process.argv.slice(1)[0]);
   }  
 }
-
-//app.server = createServer(app);
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', start);
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (!running) {
-    start();
-  }
-});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
@@ -169,8 +190,3 @@ function processUrl (url) {
 }
 
 app.setAsDefaultProtocolClient(Protocol);
-
-app.on('open-url', (event, url) => {
-  event.preventDefault();
-  processUrl(url);
-});
