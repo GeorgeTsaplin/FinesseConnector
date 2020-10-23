@@ -1,6 +1,6 @@
 # Finesse Connector
 
-Finesse Connector is necessary tightly integration of Сontact Сenter operator`s workstation and Finesse web-application.
+Finesse Connector is necessary for tightly integration of Сontact Сenter operator`s workstation and Finesse web-application.
 
 Application features are:
 
